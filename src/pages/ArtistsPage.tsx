@@ -36,16 +36,16 @@ export default function ArtistsPage() {
 
   const loadArtists = async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from('artists')
+    const { data } = await (supabase
+      .from('artists') as any)
       .select('*')
       .order('name');
 
     if (data) {
       const artistsWithCount = await Promise.all(
         data.map(async (artist: any) => {
-          const { count } = await supabase
-            .from('artworks')
+          const { count } = await (supabase
+            .from('artworks') as any)
             .select('*', { count: 'exact', head: true })
             .eq('artist_id', artist.id)
             .eq('is_available', true);
@@ -60,8 +60,8 @@ export default function ArtistsPage() {
 
   const loadArtistBySlug = async (slug: string) => {
     setLoading(true);
-    const { data } = await supabase
-      .from('artists')
+    const { data } = await (supabase
+      .from('artists') as any)
       .select('*')
       .eq('slug', slug)
       .maybeSingle();
@@ -69,8 +69,8 @@ export default function ArtistsPage() {
     const artist = data as Artist | null;
 
     if (artist) {
-      const { data: artworks } = await supabase
-        .from('artworks')
+      const { data: artworks } = await (supabase
+        .from('artworks') as any)
         .select('*')
         .eq('artist_id', artist.id)
         .eq('is_available', true)
@@ -81,8 +81,8 @@ export default function ArtistsPage() {
 
       // Check if user is following this artist
       if (user && artist) {
-        const { data: followData } = await supabase
-          .from('artist_follows')
+        const { data: followData } = await (supabase
+          .from('artist_follows') as any)
           .select('id')
           .eq('user_id', user.id)
           .eq('artist_id', artist.id)
@@ -97,15 +97,15 @@ export default function ArtistsPage() {
   };
 
   const loadArtistDetail = async (id: string) => {
-    const { data: artist } = await supabase
-      .from('artists')
+    const { data: artist } = await (supabase
+      .from('artists') as any)
       .select('*')
       .eq('id', id)
       .maybeSingle();
 
     if (artist) {
-      const { data: artworks } = await supabase
-        .from('artworks')
+      const { data: artworks } = await (supabase
+        .from('artworks') as any)
         .select('*, artists(*)')
         .eq('artist_id', id)
         .eq('is_available', true)
@@ -116,8 +116,8 @@ export default function ArtistsPage() {
 
       // Check if user is following this artist
       if (user && artist) {
-        const { data: followData } = await supabase
-          .from('artist_follows')
+        const { data: followData } = await (supabase
+          .from('artist_follows') as any)
           .select('id')
           .eq('user_id', user.id)
           .eq('artist_id', artist.id)
@@ -139,16 +139,16 @@ export default function ArtistsPage() {
     try {
       if (isFollowing) {
         // Unfollow
-        await supabase
-          .from('artist_follows')
+        await (supabase
+          .from('artist_follows') as any)
           .delete()
           .eq('user_id', user.id)
           .eq('artist_id', selectedArtist.id);
         setIsFollowing(false);
       } else {
         // Follow
-        await supabase
-          .from('artist_follows')
+        await (supabase
+          .from('artist_follows') as any)
           .insert([{
             user_id: user.id,
             artist_id: selectedArtist.id
@@ -239,8 +239,8 @@ export default function ArtistsPage() {
                   onClick={handleToggleFollow}
                   disabled={followLoading}
                   className={`ml-4 inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all shadow-lg hover:shadow-xl align-middle ${isFollowing
-                      ? 'bg-white/80 backdrop-blur-sm border border-gray-300 text-gray-700 hover:bg-gray-50'
-                      : 'bg-gradient-to-r from-pink-400 via-orange-500 to-yellow-500 text-white hover:shadow-2xl'
+                    ? 'bg-white/80 backdrop-blur-sm border border-gray-300 text-gray-700 hover:bg-gray-50'
+                    : 'bg-gradient-to-r from-pink-400 via-orange-500 to-yellow-500 text-white hover:shadow-2xl'
                     }`}
                 >
                   {followLoading ? (

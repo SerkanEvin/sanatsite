@@ -267,7 +267,7 @@ export default function CustomerDashboard() {
 
     const handleMarkAsRead = async (notificationId: string) => {
         await (supabase
-            .from('customer_notifications') as any)
+            .from('notifications') as any)
             .update({ is_read: true, read_at: new Date().toISOString() })
             .eq('id', notificationId);
 
@@ -506,7 +506,7 @@ export default function CustomerDashboard() {
                                                 </div>
                                                 <div className="p-4">
                                                     <h3 className="font-semibold text-gray-900 mb-1">{fav.artworks.title}</h3>
-                                                    <p className="text-sm text-gray-600 mb-2">{fav.artworks.artists.name}</p>
+                                                    <p className="text-sm text-gray-600 mb-2">{fav.artworks.artists?.name || t('unknownArtist')}</p>
                                                     <div className="flex items-center justify-between">
                                                         <span className="font-bold text-orange-600">
                                                             {formatPrice(fav.artworks.price, fav.artworks.base_currency as any)}

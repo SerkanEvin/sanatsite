@@ -31,7 +31,7 @@ const currencySymbols = {
 export function CurrencyProvider({ children }: { children: ReactNode }) {
   const [currency, setCurrencyState] = useState<Currency>(() => {
     const saved = localStorage.getItem('currency');
-    return (saved as Currency) || 'USD';
+    return (saved as Currency) || 'EUR';
   });
 
   const [exchangeRates, setExchangeRates] = useState<ExchangeRates>({
@@ -74,11 +74,18 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
   const convertPrice = (price: number, fromCurrency: Currency, toCurrency: Currency): number => {
     if (fromCurrency === toCurrency) return price;
 
-    const priceInUSD = price / exchangeRates[fromCurrency];
-    return priceInUSD * exchangeRates[toCurrency];
+    // Convert to USD first
+    const priceInUSD = fromCurrency === 'USD' ? price : price / exchangeRates[fromCurrency];
+    const converted = priceInUSD * exchangeRates[toCurrency];
+
+    if (isNaN(converted)) {
+      console.warn('Currency conversion resulted in NaN:', { price, fromCurrency, toCurrency, exchangeRates });
+    }
+
+    return converted;
   };
 
-  const formatPrice = (price: number, baseCurrency: Currency = 'USD'): string => {
+  const formatPrice = (price: number, baseCurrency: Currency = 'EUR'): string => {
     const convertedPrice = convertPrice(price, baseCurrency, currency);
     const symbol = currencySymbols[currency];
     const formattedNumber = convertedPrice.toLocaleString('en-US', {
