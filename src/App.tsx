@@ -17,6 +17,7 @@ import ArtistDashboard from './pages/ArtistDashboard';
 import CustomerDashboard from './pages/CustomerDashboard';
 import ArtistApplicationForm from './pages/ArtistApplicationForm';
 import AdminPanel from './pages/AdminPanel';
+import PaymentResultPage from './pages/PaymentResultPage';
 import AuthModal from './components/AuthModal';
 import Footer from './components/Footer';
 
@@ -58,6 +59,7 @@ function App() {
                       <Route path="/dashboard" element={<CustomerDashboard />} />
                       <Route path="/admin" element={<AdminPanel />} />
                       <Route path="/artist-dashboard" element={<ArtistDashboard />} />
+                      <Route path="/payment-result" element={<PaymentResultPage />} />
                       <Route path="/artist-application" element={<ArtistApplicationForm />} />
                       {/* Artist slug routes must be last to avoid catching other routes */}
                       <Route path="/artist/:artistSlug" element={<ArtistsPage />} />
