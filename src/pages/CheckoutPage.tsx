@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import { ArrowLeft, CreditCard, Package } from 'lucide-react';
+import { ArrowLeft, CreditCard } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useCurrency } from '../contexts/CurrencyContext';
@@ -12,13 +12,12 @@ import { Country, State, City, IState, ICity } from 'country-state-city';
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
-  const { cartItems, clearCart } = useCart();
+  const { cartItems } = useCart();
   const { user } = useAuth();
   const { formatPrice, convertPrice, currency } = useCurrency();
   const { t } = useLanguage();
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [orderComplete, setOrderComplete] = useState(false);
 
   // Location State
   const [selectedCountry, setSelectedCountry] = useState('');
@@ -88,60 +87,49 @@ export default function CheckoutPage() {
 
     setLoading(true);
 
-    const isMockUser = user.id === 'da3db02a-6096-4876-857e-000000000000';
-    let order = null;
-    let orderError = null;
+    try {
+      // 1. Initialize Payment with Edge Function
+      const { data, error } = await supabase.functions.invoke('iyzico-init', {
+        body: {
+          user,
+          cartItems,
+          totalAmount: total,
+          shippingAddress: formData,
+        },
+      });
 
-    if (isMockUser) {
-      console.log('🤖 Admin Mock User: Simulating order creation');
-      order = { id: `mock-order-${Date.now()}` };
-    } else {
-      const { data: ordersData, error: err } = await (supabase
-        .from('orders') as any)
-        .insert({
-          user_id: user.id,
-          total_amount: total,
-          status: 'pending',
-          shipping_address: formData as any,
-        })
-        .select();
+      if (error) throw error;
 
-      order = ordersData?.[0];
-      orderError = err;
-    }
+      if (data?.status === 'success' && data?.checkoutFormContent) {
+        // Create a temporary container to render the form and submit it
+        // Or simply redirect if data.paymentPageUrl is enabled (Iyzico has different modes)
+        // For checkoutFormContent (popup/inline), we often just inject the script or HTML.
 
-    if (!orderError && order) {
-      const orderItems = cartItems.map((item) => ({
-        order_id: order.id,
-        artwork_id: item.artwork_id,
-        price: item.price || item.artwork.price,
-        quantity: item.quantity,
-        size: item.size,
-        material: item.material,
-        frame: item.frame
-      }));
+        // METHOD 1: Inject HTML (Common for Iyzico inline)
+        // Ideally, we'd navigate to a dedicated payment page or render it here.
+        // For simplicity, let's create a dynamic div and script.
 
-      if (!isMockUser) {
-        await (supabase.from('order_items') as any).insert(orderItems);
-
-        for (const item of cartItems) {
-          await (supabase
-            .from('artworks') as any)
-            .update({ is_available: false })
-            .eq('id', item.artwork_id);
+        const container = document.getElementById('iyzipay-checkout-form');
+        if (container) {
+          container.innerHTML = data.checkoutFormContent;
+          // Evaluate scripts in the injected HTML
+          const scripts = container.getElementsByTagName('script');
+          for (let i = 0; i < scripts.length; i++) {
+            const script = document.createElement('script');
+            script.text = scripts[i].text;
+            document.body.appendChild(script);
+          }
         }
+      } else if (data?.status === 'failure') {
+        throw new Error(data.errorMessage || 'Payment initialization failed');
+      } else {
+        console.error("Iyzico response:", data);
+        throw new Error('Invalid response from payment provider');
       }
 
-      await clearCart();
-      showToast(t('orderConfirmed'), 'success');
-      setOrderComplete(true);
-    } else {
-      console.error('Order error DETAILS:', orderError);
-      if (orderError) {
-        showToast(`${t('failedToCompleteOrder')}: ${orderError.message || 'Unknown error'}`, 'error');
-      } else {
-        showToast(t('failedToCompleteOrder'), 'error');
-      }
+    } catch (err: any) {
+      console.error('Payment Error:', err);
+      showToast(err.message || t('failedToCompleteOrder'), 'error');
     }
 
     setLoading(false);
@@ -155,44 +143,7 @@ export default function CheckoutPage() {
     );
   }
 
-  if (orderComplete) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-orange-50 to-yellow-50 flex items-center justify-center relative overflow-hidden">
-        <CornerFrame position="top-left" className="opacity-30" />
-        <CornerFrame position="top-right" className="opacity-30" />
-        <CornerFrame position="bottom-left" className="opacity-30" />
-        <CornerFrame position="bottom-right" className="opacity-30" />
-        <FloatingShapes className="top-20 left-20" />
-        <FloatingShapes className="bottom-20 right-20" />
-        <Sparkle className="top-32 left-1/4" delay={0} />
-        <Sparkle className="top-40 right-1/4" delay={300} />
-        <HandDrawnStar className="bottom-40 left-1/3" delay={200} />
-        <HandDrawnStar className="top-48 right-1/3" delay={400} />
-        <PaintSplatter className="top-60 left-10" size={90} />
-        <ScribbleCircle className="bottom-32 right-10" size={85} />
-        <Doodle className="top-72 right-1/4 animate-float" type="swirl" />
 
-        <div className="text-center max-w-md relative z-10">
-          <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
-            <Package className="w-10 h-10 text-white" />
-          </div>
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-pink-500 via-orange-600 to-yellow-500 bg-clip-text text-transparent relative inline-block">
-            {t('orderCompleteTitle')}
-            <SketchLine className="absolute -bottom-1 left-0 w-full" />
-          </h1>
-          <p className="text-gray-600 mb-8">
-            {t('orderCompleteMessage')}
-          </p>
-          <button
-            onClick={() => navigate('/')}
-            className="px-8 py-4 bg-gradient-to-r from-pink-400 via-orange-500 to-yellow-500 text-white rounded-full font-medium hover:shadow-lg transition-shadow"
-          >
-            {t('continueShopping')}
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   if (cartItems.length === 0) {
     return (
@@ -387,6 +338,7 @@ export default function CheckoutPage() {
               >
                 {loading ? t('processing') : t('completePurchase')}
               </button>
+              <div id="iyzipay-checkout-form" className="responsive mt-8"></div>
             </form>
           </div>
 
