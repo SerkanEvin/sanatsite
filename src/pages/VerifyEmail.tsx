@@ -12,7 +12,7 @@ export default function VerifyEmail() {
     const { verifyOtp, signUp } = useAuth();
 
     const [email, setEmail] = useState('');
-    const [otp, setOtp] = useState(['', '', '', '', '', '']);
+    const [otp, setOtp] = useState(['', '', '', '', '', '', '', '']); // Changed to 8 digits
     const [loading, setLoading] = useState(false);
     const [resending, setResending] = useState(false);
     const [error, setError] = useState('');
@@ -36,7 +36,7 @@ export default function VerifyEmail() {
         newOtp[index] = value.slice(-1);
         setOtp(newOtp);
 
-        if (value && index < 5) {
+        if (value && index < 7) { // Support up to 8 boxes
             inputRefs.current[index + 1]?.focus();
         }
     };
@@ -49,7 +49,7 @@ export default function VerifyEmail() {
 
     const handlePaste = (e: React.ClipboardEvent) => {
         e.preventDefault();
-        const pastedData = e.clipboardData.getData('text').slice(0, 6).split('');
+        const pastedData = e.clipboardData.getData('text').slice(0, 8).split(''); // Support up to 8 boxes
         const newOtp = [...otp];
         pastedData.forEach((char, i) => {
             if (/^\d$/.test(char)) {
@@ -57,13 +57,13 @@ export default function VerifyEmail() {
             }
         });
         setOtp(newOtp);
-        inputRefs.current[Math.min(pastedData.length, 5)]?.focus();
+        inputRefs.current[Math.min(pastedData.length, 7)]?.focus();
     };
 
     const handleVerify = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
         const code = otp.join('');
-        if (code.length !== 6) return;
+        if (code.length !== 8) return; // Support up to 8 boxes
 
         setLoading(true);
         setError('');
@@ -88,8 +88,6 @@ export default function VerifyEmail() {
         setError('');
         setMessage('');
 
-        // In Supabase, if the user already exists but isn't confirmed, 
-        // calling signUp again with the same email sends a new confirmation OTP.
         const { error } = await signUp(email, 'dummy-not-used-for-resend');
 
         if (error && !error.message.includes('already registered')) {
@@ -110,7 +108,7 @@ export default function VerifyEmail() {
             <PaintSplatter className="bottom-1/4 left-10 opacity-20" size={120} />
             <CirclePattern className="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-5" />
 
-            <div className="max-w-md w-full bg-white/80 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-white/20 relative z-10 text-center">
+            <div className="max-w-2xl w-full bg-white/80 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-white/20 relative z-10 text-center">
                 {success ? (
                     <div className="animate-scaleIn">
                         <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-green-200">
@@ -136,7 +134,7 @@ export default function VerifyEmail() {
                         </p>
 
                         <form onSubmit={handleVerify} className="space-y-8">
-                            <div className="flex justify-between gap-2" onPaste={handlePaste}>
+                            <div className="flex justify-between gap-1 sm:gap-2" onPaste={handlePaste}>
                                 {otp.map((digit, index) => (
                                     <input
                                         key={index}
@@ -146,7 +144,7 @@ export default function VerifyEmail() {
                                         value={digit}
                                         onChange={(e) => handleChange(index, e.target.value)}
                                         onKeyDown={(e) => handleKeyDown(index, e)}
-                                        className="w-12 h-14 text-center text-2xl font-bold border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all outline-none bg-white/50"
+                                        className="w-10 h-14 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-bold border-2 border-gray-200 rounded-lg sm:rounded-xl focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all outline-none bg-white/50"
                                         disabled={loading}
                                     />
                                 ))}
