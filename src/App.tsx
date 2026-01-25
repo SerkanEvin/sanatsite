@@ -17,6 +17,7 @@ import ArtistDashboard from './pages/ArtistDashboard';
 import CustomerDashboard from './pages/CustomerDashboard';
 import ArtistApplicationForm from './pages/ArtistApplicationForm';
 import AdminPanel from './pages/AdminPanel';
+import PaymentResultPage from './pages/PaymentResultPage';
 import VerifyEmail from './pages/VerifyEmail';
 import AuthCallback from './pages/AuthCallback';
 import AuthModal from './components/AuthModal';
@@ -60,6 +61,7 @@ function App() {
                       <Route path="/dashboard" element={<CustomerDashboard />} />
                       <Route path="/admin" element={<AdminPanel />} />
                       <Route path="/artist-dashboard" element={<ArtistDashboard />} />
+                      <Route path="/payment-result" element={<PaymentResultPage />} />
                       <Route path="/artist-application" element={<ArtistApplicationForm />} />
                       <Route path="/verify-email" element={<VerifyEmail />} />
                       <Route path="/auth/callback" element={<AuthCallback />} />
