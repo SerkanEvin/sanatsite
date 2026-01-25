@@ -73,9 +73,10 @@ export default function CheckoutPage() {
 
   const total = cartItems.reduce((sum, item) => {
     const priceToUse = item.price || item.artwork?.price || 0;
+    const baseCurrencyToUse = (item.artwork?.base_currency as any) || 'EUR';
     const priceInCurrentCurrency = convertPrice(
       priceToUse,
-      'USD',
+      baseCurrencyToUse,
       currency
     );
     return sum + priceInCurrentCurrency;
@@ -87,7 +88,7 @@ export default function CheckoutPage() {
 
     setLoading(true);
 
-    const { data, error: orderError } = await (supabase
+    const { data: ordersData, error: orderError } = await (supabase
       .from('orders') as any)
       .insert({
         user_id: user.id,
@@ -95,10 +96,9 @@ export default function CheckoutPage() {
         status: 'pending',
         shipping_address: formData as any,
       })
-      .select()
-      .single();
+      .select();
 
-    const order = data as any;
+    const order = ordersData?.[0];
 
     if (!orderError && order) {
       const orderItems = cartItems.map((item) => ({
@@ -124,8 +124,12 @@ export default function CheckoutPage() {
       showToast(t('orderConfirmed'), 'success');
       setOrderComplete(true);
     } else {
-      console.error('Order error:', orderError);
-      showToast(t('failedToCompleteOrder'), 'error');
+      console.error('Order error DETAILS:', orderError);
+      if (orderError) {
+        showToast(`${t('failedToCompleteOrder')}: ${orderError.message || 'Unknown error'}`, 'error');
+      } else {
+        showToast(t('failedToCompleteOrder'), 'error');
+      }
     }
 
     setLoading(false);
@@ -390,7 +394,7 @@ export default function CheckoutPage() {
                       <h3 className="font-semibold text-sm truncate">{item.artwork?.title || t('unknownArtwork')}</h3>
                       <p className="text-sm text-gray-600">{item.artwork?.artists?.name || t('unknownArtist')}</p>
                       <p className="text-lg font-bold text-orange-600 mt-2">
-                        {formatPrice(item.price || item.artwork?.price || 0, 'USD')}
+                        {formatPrice(item.price || item.artwork?.price || 0, (item.artwork?.base_currency as any) || 'EUR')}
                       </p>
                       {(item.size || item.material || item.frame) && (
                         <div className="mt-2 flex flex-wrap gap-2">

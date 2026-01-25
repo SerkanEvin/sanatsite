@@ -418,6 +418,7 @@ const translations: Record<Language, Record<string, string>> = {
     viewInRoom: 'View in Room',
     follow: 'Follow',
     pleaseSignIn: 'Please sign in to follow artists',
+    followUs: 'Follow Us',
   },
 
   tr: {
@@ -829,6 +830,7 @@ const translations: Record<Language, Record<string, string>> = {
     viewInRoom: 'Odada Görüntüle',
     follow: 'Takip Et',
     pleaseSignIn: 'Sanatçıları takip etmek için giriş yapın',
+    followUs: 'Bizi Takip Edin',
   },
 };
 

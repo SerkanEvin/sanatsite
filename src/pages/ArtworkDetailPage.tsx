@@ -55,8 +55,8 @@ export default function ArtworkDetailPage({ onShowAuth }: ArtworkDetailPageProps
 
     // Check if favorited
     if (user && artworkId) {
-      const { data: fav } = await supabase
-        .from('favorites')
+      const { data: fav } = await (supabase
+        .from('favorites') as any)
         .select('id')
         .eq('user_id', user.id)
         .eq('artwork_id', artworkId)
@@ -186,10 +186,10 @@ export default function ArtworkDetailPage({ onShowAuth }: ArtworkDetailPageProps
                 {artwork.title}
               </h1>
               <p className="text-2xl font-light text-gray-900">
-                {formatPrice(calculatePrice(), 'USD')}
+                {formatPrice(calculatePrice(), (artwork.base_currency as any) || 'EUR')}
               </p>
               <p className="text-sm text-gray-500 mt-1">
-                {t('basePrice')}: {formatPrice(artwork.price, 'USD')}
+                {t('basePrice')}: {formatPrice(artwork.price, (artwork.base_currency as any) || 'EUR')}
               </p>
             </div>
 
@@ -366,8 +366,8 @@ export default function ArtworkDetailPage({ onShowAuth }: ArtworkDetailPageProps
                     }
 
                     // Toggle favorite
-                    const { data: existing } = await supabase
-                      .from('favorites')
+                    const { data: existing } = await (supabase
+                      .from('favorites') as any)
                       .select('id')
                       .eq('user_id', user.id)
                       .eq('artwork_id', artworkId)
@@ -375,14 +375,14 @@ export default function ArtworkDetailPage({ onShowAuth }: ArtworkDetailPageProps
 
                     if (existing) {
                       // Remove from favorites
-                      await supabase
-                        .from('favorites')
+                      await (supabase
+                        .from('favorites') as any)
                         .delete()
                         .eq('id', existing.id);
                     } else {
                       // Add to favorites
-                      await supabase
-                        .from('favorites')
+                      await (supabase
+                        .from('favorites') as any)
                         .insert([{
                           user_id: user.id,
                           artwork_id: artworkId
