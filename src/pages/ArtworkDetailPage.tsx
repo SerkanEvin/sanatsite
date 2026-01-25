@@ -35,6 +35,7 @@ export default function ArtworkDetailPage({ onShowAuth }: ArtworkDetailPageProps
   const [selectedFrame, setSelectedFrame] = useState('no-frame');
   const [selectedMaterial, setSelectedMaterial] = useState('photograph-paper');
   const [selectedSize, setSelectedSize] = useState('38x50cm');
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     if (artworkId) {
@@ -55,8 +56,8 @@ export default function ArtworkDetailPage({ onShowAuth }: ArtworkDetailPageProps
 
     // Check if favorited
     if (user && artworkId) {
-      const { data: fav } = await supabase
-        .from('favorites')
+      const { data: fav } = await (supabase
+        .from('favorites') as any)
         .select('id')
         .eq('user_id', user.id)
         .eq('artwork_id', artworkId)
@@ -124,9 +125,53 @@ export default function ArtworkDetailPage({ onShowAuth }: ArtworkDetailPageProps
         material: selectedMaterial,
         frame: selectedFrame,
         price: calculatePrice()
-      });
+      }, quantity);
     }
     setAdding(false);
+  };
+
+  // Helper for image scaling
+  const getImageScale = () => {
+    const scales: { [key: string]: number } = {
+      '38x50cm': 0.8,
+      '45x60cm': 0.85,
+      '60x80cm': 0.9,
+      '75x100cm': 0.95,
+      '96x128cm': 1.0
+    };
+    return scales[selectedSize] || 1.0;
+  };
+
+  // Helpers for framing and material visuals
+  const getFrameStyles = () => {
+    if (selectedFrame === 'stretched-canvas') {
+      return {
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 100px rgba(0,0,0,0.1)',
+        padding: '2px',
+        background: '#fcfcfc',
+        borderRadius: '2px',
+        borderRight: '15px solid rgba(0,0,0,0.05)',
+        borderBottom: '15px solid rgba(0,0,0,0.1)',
+      };
+    }
+    return {
+      boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.3)',
+    };
+  };
+
+  const getMaterialOverlay = () => {
+    if (selectedMaterial === 'canvas') {
+      return (
+        <div
+          className="absolute inset-0 pointer-events-none opacity-40 mix-blend-overlay"
+          style={{
+            backgroundImage: `url('https://www.transparenttextures.com/patterns/canvas-fabric.png')`,
+            backgroundRepeat: 'repeat'
+          }}
+        />
+      );
+    }
+    return null;
   };
 
   if (loading) {
@@ -167,12 +212,21 @@ export default function ArtworkDetailPage({ onShowAuth }: ArtworkDetailPageProps
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
           {/* Left Column - Image */}
           <div className="space-y-8">
-            <div className="aspect-[4/5] bg-gray-50 relative">
-              <img
-                src={artwork.image_url}
-                alt={artwork.title}
-                className="w-full h-full object-contain"
-              />
+            <div className="aspect-[4/5] bg-gray-50 relative flex items-center justify-center overflow-hidden rounded-2xl group">
+              <div
+                className="relative transition-all duration-500 ease-in-out"
+                style={{
+                  transform: `scale(${getImageScale()})`,
+                  ...getFrameStyles()
+                }}
+              >
+                <img
+                  src={artwork.image_url}
+                  alt={artwork.title}
+                  className="w-full h-full object-contain relative z-0"
+                />
+                {getMaterialOverlay()}
+              </div>
             </div>
             <p className="text-xs text-gray-500 text-center uppercase tracking-widest">
               {t('framesDisplayOnly')}
@@ -186,10 +240,10 @@ export default function ArtworkDetailPage({ onShowAuth }: ArtworkDetailPageProps
                 {artwork.title}
               </h1>
               <p className="text-2xl font-light text-gray-900">
-                {formatPrice(calculatePrice(), 'USD')}
+                {formatPrice(calculatePrice() * quantity, (artwork.base_currency as any) || 'EUR')}
               </p>
               <p className="text-sm text-gray-500 mt-1">
-                {t('basePrice')}: {formatPrice(artwork.price, 'USD')}
+                {t('basePrice')}: {formatPrice(artwork.price, (artwork.base_currency as any) || 'EUR')}
               </p>
             </div>
 
@@ -346,7 +400,8 @@ export default function ArtworkDetailPage({ onShowAuth }: ArtworkDetailPageProps
                 <div className="w-20">
                   <input
                     type="number"
-                    defaultValue="1"
+                    value={quantity}
+                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
                     min="1"
                     className="w-full py-3 px-4 border border-gray-200 text-center focus:outline-none focus:border-black"
                   />
@@ -366,8 +421,8 @@ export default function ArtworkDetailPage({ onShowAuth }: ArtworkDetailPageProps
                     }
 
                     // Toggle favorite
-                    const { data: existing } = await supabase
-                      .from('favorites')
+                    const { data: existing } = await (supabase
+                      .from('favorites') as any)
                       .select('id')
                       .eq('user_id', user.id)
                       .eq('artwork_id', artworkId)
@@ -375,14 +430,14 @@ export default function ArtworkDetailPage({ onShowAuth }: ArtworkDetailPageProps
 
                     if (existing) {
                       // Remove from favorites
-                      await supabase
-                        .from('favorites')
+                      await (supabase
+                        .from('favorites') as any)
                         .delete()
                         .eq('id', existing.id);
                     } else {
                       // Add to favorites
-                      await supabase
-                        .from('favorites')
+                      await (supabase
+                        .from('favorites') as any)
                         .insert([{
                           user_id: user.id,
                           artwork_id: artworkId
@@ -411,14 +466,10 @@ export default function ArtworkDetailPage({ onShowAuth }: ArtworkDetailPageProps
 
               <button
                 onClick={handleBack}
-                className="flex items-center gap-2 text-gray-600 hover:text-orange-600 transition-colors"
+                className="flex items-center gap-2 text-gray-600 hover:text-orange-600 transition-colors pt-4"
               >
                 <ArrowLeft className="w-5 h-5" />
                 {t('back')}
-              </button>
-
-              <button className="text-xs uppercase tracking-widest underline text-gray-500 hover:text-black">
-                {t('addToWishlist')}
               </button>
             </div>
           </div>

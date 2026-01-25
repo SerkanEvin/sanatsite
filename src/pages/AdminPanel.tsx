@@ -30,7 +30,7 @@ export default function AdminPanel() {
     artist_id: '',
     category_id: '',
     price: '',
-    base_currency: 'USD' as Currency,
+    base_currency: 'EUR' as Currency,
     description: '',
     image_url: '',
     dimensions: '',
@@ -150,7 +150,7 @@ export default function AdminPanel() {
         artist_id: '',
         category_id: '',
         price: '',
-        base_currency: 'USD',
+        base_currency: 'EUR',
         description: '',
         image_url: '',
         dimensions: '',
@@ -174,7 +174,7 @@ export default function AdminPanel() {
       artist_id: artwork.artist_id,
       category_id: artwork.category_id,
       price: artwork.price.toString(),
-      base_currency: artwork.base_currency || 'USD',
+      base_currency: artwork.base_currency || 'EUR',
       description: artwork.description || '',
       image_url: artwork.image_url,
       dimensions: artwork.dimensions || '',
@@ -603,8 +603,8 @@ export default function AdminPanel() {
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                         required
                       >
-                        <option value="USD">USD ($)</option>
                         <option value="EUR">EUR (€)</option>
+                        <option value="USD">USD ($)</option>
                         <option value="GBP">GBP (£)</option>
                         <option value="TRY">TRY (₺)</option>
                       </select>
@@ -730,7 +730,7 @@ export default function AdminPanel() {
                             artist_id: '',
                             category_id: '',
                             price: '',
-                            base_currency: 'USD',
+                            base_currency: 'EUR',
                             description: '',
                             image_url: '',
                             dimensions: '',

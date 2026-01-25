@@ -152,8 +152,8 @@ export default function ArtistDashboard() {
                 .getPublicUrl(fileName);
 
             // 3. Create Submission Record
-            const { error: dbError } = await supabase
-                .from('artwork_submissions')
+            const { error: dbError } = await (supabase
+                .from('artwork_submissions') as any)
                 .insert([{
                     artist_id: artist.id,
                     image_url: publicUrl,
