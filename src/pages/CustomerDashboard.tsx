@@ -267,7 +267,7 @@ export default function CustomerDashboard() {
 
     const handleMarkAsRead = async (notificationId: string) => {
         await (supabase
-            .from('customer_notifications') as any)
+            .from('notifications') as any)
             .update({ is_read: true, read_at: new Date().toISOString() })
             .eq('id', notificationId);
 
