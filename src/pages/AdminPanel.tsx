@@ -464,13 +464,13 @@ export default function AdminPanel() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {t('usdRateLabel')}
+                      {t('eurRateLabel')}
                     </label>
                     <input
                       type="number"
                       step="0.01"
-                      value={rates.USD}
-                      onChange={(e) => setRates({ ...rates, USD: e.target.value })}
+                      value={rates.EUR}
+                      onChange={(e) => setRates({ ...rates, EUR: e.target.value })}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                       disabled
                     />
@@ -479,16 +479,16 @@ export default function AdminPanel() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      EUR Rate (€)
+                      {t('usdRateLabel')}
                     </label>
                     <input
                       type="number"
                       step="0.0001"
-                      value={rates.EUR}
-                      onChange={(e) => setRates({ ...rates, EUR: e.target.value })}
+                      value={rates.USD}
+                      onChange={(e) => setRates({ ...rates, USD: e.target.value })}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     />
-                    <p className="text-sm text-gray-500 mt-1">1 USD = {rates.EUR} EUR</p>
+                    <p className="text-sm text-gray-500 mt-1">1 EUR = {rates.USD} USD</p>
                   </div>
 
                   <div>
@@ -502,7 +502,7 @@ export default function AdminPanel() {
                       onChange={(e) => setRates({ ...rates, GBP: e.target.value })}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     />
-                    <p className="text-sm text-gray-500 mt-1">1 USD = {rates.GBP} GBP</p>
+                    <p className="text-sm text-gray-500 mt-1">1 EUR = {rates.GBP} GBP</p>
                   </div>
 
                   <div>
@@ -516,7 +516,7 @@ export default function AdminPanel() {
                       onChange={(e) => setRates({ ...rates, TRY: e.target.value })}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     />
-                    <p className="text-sm text-gray-500 mt-1">1 USD = {rates.TRY} TRY</p>
+                    <p className="text-sm text-gray-500 mt-1">1 EUR = {rates.TRY} TRY</p>
                   </div>
                 </div>
 

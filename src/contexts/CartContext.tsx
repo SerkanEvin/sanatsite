@@ -18,7 +18,7 @@ interface CartItemWithArtwork {
 interface CartContextType {
   cartItems: CartItemWithArtwork[];
   cartCount: number;
-  addToCart: (artworkId: string, options?: { size?: string; material?: string; frame?: string; price?: number }, quantity?: number) => Promise<void>;
+  addToCart: (artworkId: string, options?: { size?: string; material?: string; frame?: string; price?: number }) => Promise<void>;
   removeFromCart: (cartItemId: string) => Promise<void>;
   clearCart: () => Promise<void>;
   loading: boolean;

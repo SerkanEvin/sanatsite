@@ -35,10 +35,10 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
   });
 
   const [exchangeRates, setExchangeRates] = useState<ExchangeRates>({
-    USD: 1,
-    EUR: 0.92,
-    TRY: 34.50,
-    GBP: 0.79
+    USD: 1.08,
+    EUR: 1,
+    TRY: 37.50,
+    GBP: 0.86
   });
 
   useEffect(() => {
@@ -74,9 +74,9 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
   const convertPrice = (price: number, fromCurrency: Currency, toCurrency: Currency): number => {
     if (fromCurrency === toCurrency) return price;
 
-    // Convert to USD first
-    const priceInUSD = fromCurrency === 'USD' ? price : price / exchangeRates[fromCurrency];
-    const converted = priceInUSD * exchangeRates[toCurrency];
+    // Convert to EUR first (EUR is the anchor)
+    const priceInEUR = fromCurrency === 'EUR' ? price : price / exchangeRates[fromCurrency];
+    const converted = priceInEUR * exchangeRates[toCurrency];
 
     if (isNaN(converted)) {
       console.warn('Currency conversion resulted in NaN:', { price, fromCurrency, toCurrency, exchangeRates });
