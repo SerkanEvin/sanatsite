@@ -40,8 +40,8 @@ export default function Footer() {
                     <div className="space-y-4">
                         <h3 className="text-xs font-bold tracking-widest uppercase text-gray-900 mb-6">{t('followUs')}</h3>
                         <div className="flex space-x-4">
-                            <a href="#" className="text-gray-400 hover:text-orange-600 transition-colors"><Instagram className="w-5 h-5" /></a>
-                            <a href="#" className="text-gray-400 hover:text-orange-600 transition-colors"><Facebook className="w-5 h-5" /></a>
+                            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-orange-600 transition-colors"><Instagram className="w-5 h-5" /></a>
+                            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-orange-600 transition-colors"><Facebook className="w-5 h-5" /></a>
                         </div>
                     </div>
 

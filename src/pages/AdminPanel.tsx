@@ -19,7 +19,7 @@ export default function AdminPanel() {
   const [applications, setApplications] = useState<any[]>([]);
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [loadingData, setLoadingData] = useState(true);
-  const [rates, setRates] = useState({ USD: '1.0', EUR: '0.92', GBP: '0.79', TRY: '34.50' });
+  const [rates, setRates] = useState({ EUR: '1.0', USD: '1.08', GBP: '0.86', TRY: '37.50' });
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -49,10 +49,10 @@ export default function AdminPanel() {
 
   useEffect(() => {
     setRates({
-      USD: exchangeRates.USD?.toString() || '1.0',
-      EUR: exchangeRates.EUR?.toString() || '0.92',
-      GBP: exchangeRates.GBP?.toString() || '0.79',
-      TRY: exchangeRates.TRY?.toString() || '34.50',
+      USD: exchangeRates.USD?.toString() || '1.08',
+      EUR: exchangeRates.EUR?.toString() || '1.0',
+      GBP: exchangeRates.GBP?.toString() || '0.86',
+      TRY: exchangeRates.TRY?.toString() || '37.50',
     });
   }, [exchangeRates]);
 
@@ -278,12 +278,28 @@ export default function AdminPanel() {
       if (submissionsError) console.warn('Error deleting submissions:', submissionsError);
 
       // Finally delete the artist
+      const { data: artistData } = await (supabase
+        .from('artists' as any) as any)
+        .select('user_id')
+        .eq('id', id)
+        .single();
+
+      const userId = artistData?.user_id;
+
       const { error } = await supabase
         .from('artists' as any)
         .delete()
         .eq('id', id);
 
       if (error) throw error;
+
+      // Also delete related applications if they exist
+      if (userId) {
+        await (supabase
+          .from('artist_applications' as any) as any)
+          .delete()
+          .eq('user_id', userId);
+      }
 
       setMessage(t('artistDeleted'));
       await loadData();

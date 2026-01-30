@@ -98,7 +98,6 @@ export default function ArtworksPage() {
       .from('artworks')
       .select('*, artists(*)')
       .eq('is_available', true)
-      .eq('is_deleted', false)
       .order('created_at', { ascending: false });
 
     // Category filter
@@ -437,7 +436,7 @@ export default function ArtworksPage() {
                     {artwork.artists?.name || t('unknownArtist')}
                   </button>
                   <p className="text-lg font-bold bg-gradient-to-r from-pink-500 via-orange-600 to-yellow-500 bg-clip-text text-transparent">
-                    {formatPrice(artwork.price, 'USD')}
+                    {formatPrice(artwork.price, (artwork.base_currency as any) || 'EUR')}
                   </p>
                 </div>
               </div>

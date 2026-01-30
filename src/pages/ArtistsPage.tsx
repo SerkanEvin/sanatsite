@@ -374,7 +374,7 @@ export default function ArtistsPage() {
                       {artwork.title}
                     </h3>
                     <p className="text-lg font-bold bg-gradient-to-r from-pink-500 via-orange-600 to-yellow-500 bg-clip-text text-transparent">
-                      {formatPrice(artwork.price, 'USD')}
+                      {formatPrice(artwork.price, (artwork.base_currency as any) || 'EUR')}
                     </p>
                   </div>
                 </div>
