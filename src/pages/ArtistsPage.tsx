@@ -389,7 +389,7 @@ export default function ArtistsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
       {/* Enhanced Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-pink-50 via-orange-50 to-yellow-50 py-24">
+      <div className="relative overflow-hidden bg-gradient-to-br from-pink-50 via-orange-50 to-yellow-50 py-32">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiM5MzMzZWEiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDE0YzAtNi42MjcgNS4zNzMtMTIgMTItMTJzMTIgNS4zNzMgMTIgMTItNS4zNzMgMTItMTIgMTItMTItNS4zNzMtMTItMTJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-30" />
 
         <CornerFrame position="top-left" className="opacity-20" />
@@ -405,7 +405,7 @@ export default function ArtistsPage() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-sm rounded-full text-sm font-medium text-orange-600 mb-4 opacity-0 animate-fadeIn">
+            <div className="hidden inline-flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-sm rounded-full text-sm font-medium text-orange-600 mb-4 opacity-0 animate-fadeIn">
               <Users className="w-4 h-4" />
               {t('discoverTalentedCreators')}
             </div>

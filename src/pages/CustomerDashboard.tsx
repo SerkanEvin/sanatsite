@@ -5,7 +5,8 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useCurrency } from '../contexts/CurrencyContext';
 import { supabase } from '../lib/supabase';
 import { CornerFrame, AbstractBrush, CirclePattern } from '../components/DecorativeElements';
-import { Package, Heart, Users, Bell, User, ShoppingBag, Check, Eye, Trash2 } from 'lucide-react';
+import { Package, Heart, Users, Bell, User, ShoppingBag, Check, Eye, Trash2, Calendar as CalendarIcon } from 'lucide-react';
+import CustomerDeliveryCalendar from '../components/customer/CustomerDeliveryCalendar';
 
 interface Customer {
     id: string;
@@ -66,7 +67,7 @@ interface Notification {
     related_artist_id: string | null;
 }
 
-type TabType = 'overview' | 'orders' | 'favorites' | 'following' | 'notifications' | 'profile';
+type TabType = 'overview' | 'orders' | 'delivery' | 'favorites' | 'following' | 'notifications' | 'profile';
 
 export default function CustomerDashboard() {
     const navigate = useNavigate();
@@ -311,6 +312,7 @@ export default function CustomerDashboard() {
     const tabs = [
         { id: 'overview' as TabType, label: t('dashboardOverview'), icon: ShoppingBag },
         { id: 'orders' as TabType, label: t('myOrders'), icon: Package },
+        { id: 'delivery' as TabType, label: 'Delivery Calendar', icon: CalendarIcon },
         { id: 'favorites' as TabType, label: t('myFavorites'), icon: Heart },
         { id: 'following' as TabType, label: t('followedArtists'), icon: Users },
         { id: 'notifications' as TabType, label: t('notifications'), icon: Bell },
@@ -478,6 +480,13 @@ export default function CustomerDashboard() {
                                         ))}
                                     </div>
                                 )}
+                            </div>
+                        )}
+
+                        {/* Delivery Tab */}
+                        {activeTab === 'delivery' && (
+                            <div>
+                                <CustomerDeliveryCalendar userId={user!.id} />
                             </div>
                         )}
 

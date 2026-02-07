@@ -166,6 +166,9 @@ export interface Database {
           currency: string | null
           status: string
           shipping_address: Json | null
+          delivery_date: string | null
+          delivery_date_set_at: string | null
+          delivery_date_set_by: string | null
           created_at: string
         }
         Insert: {
@@ -175,6 +178,9 @@ export interface Database {
           currency?: string | null
           status?: string
           shipping_address?: Json | null
+          delivery_date?: string | null
+          delivery_date_set_at?: string | null
+          delivery_date_set_by?: string | null
           created_at?: string
         }
         Update: {
@@ -184,6 +190,9 @@ export interface Database {
           currency?: string | null
           status?: string
           shipping_address?: Json | null
+          delivery_date?: string | null
+          delivery_date_set_at?: string | null
+          delivery_date_set_by?: string | null
           created_at?: string
         }
       }
@@ -251,6 +260,90 @@ export interface Database {
           created_at?: string
         }
       }
+      delivery_change_requests: {
+        Row: {
+          id: string
+          order_id: string
+          customer_id: string
+          requested_date: string | null
+          reason: string
+          status: 'pending' | 'approved' | 'rejected'
+          admin_response: string | null
+          responded_by: string | null
+          responded_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          order_id: string
+          customer_id: string
+          requested_date?: string | null
+          reason: string
+          status?: 'pending' | 'approved' | 'rejected'
+          admin_response?: string | null
+          responded_by?: string | null
+          responded_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          order_id?: string
+          customer_id?: string
+          requested_date?: string | null
+          reason?: string
+          status?: 'pending' | 'approved' | 'rejected'
+          admin_response?: string | null
+          responded_by?: string | null
+          responded_at?: string | null
+          created_at?: string
+        }
+      }
+      delivery_settings: {
+        Row: {
+          id: string
+          standard_delivery_days: number
+          busy_day_penalty_days: number
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          id?: string
+          standard_delivery_days?: number
+          busy_day_penalty_days?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          id?: string
+          standard_delivery_days?: number
+          busy_day_penalty_days?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+      }
+      busy_days: {
+        Row: {
+          id: string
+          busy_date: string
+          created_at: string
+          created_by: string | null
+          notes: string | null
+        }
+        Insert: {
+          id?: string
+          busy_date: string
+          created_at?: string
+          created_by?: string | null
+          notes?: string | null
+        }
+        Update: {
+          id?: string
+          busy_date?: string
+          created_at?: string
+          created_by?: string | null
+          notes?: string | null
+        }
+      }
     }
   }
 }
@@ -260,3 +353,6 @@ export type Artwork = Database['public']['Tables']['artworks']['Row']
 export type Category = Database['public']['Tables']['categories']['Row']
 export type CartItem = Database['public']['Tables']['cart_items']['Row']
 export type Order = Database['public']['Tables']['orders']['Row']
+export type DeliveryChangeRequest = Database['public']['Tables']['delivery_change_requests']['Row']
+export type DeliverySettings = Database['public']['Tables']['delivery_settings']['Row']
+export type BusyDay = Database['public']['Tables']['busy_days']['Row']

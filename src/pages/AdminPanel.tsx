@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TrendingUp, Package, ArrowLeft, Users, ClipboardList, Camera, Check, X, Image as ImageIcon } from 'lucide-react';
+import { TrendingUp, Package, ArrowLeft, Users, ClipboardList, Camera, Check, X, Image as ImageIcon, Calendar as CalendarIcon, Inbox } from 'lucide-react';
 import { useAdmin } from '../contexts/AdminContext';
 import { useCurrency } from '../contexts/CurrencyContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { supabase } from '../lib/supabase';
+import DeliveryCalendar from '../components/admin/DeliveryCalendar';
+import DeliveryRequestsInbox from '../components/admin/DeliveryRequestsInbox';
 
 type Currency = 'USD' | 'EUR' | 'TRY' | 'GBP';
 
@@ -23,7 +25,8 @@ export default function AdminPanel() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
 
-  const [activeTab, setActiveTab] = useState<'rates' | 'artworks' | 'applications' | 'artists' | 'submissions'>('rates');
+  const [activeTab, setActiveTab] = useState<'rates' | 'artworks' | 'applications' | 'artists' | 'submissions' | 'delivery' | 'requests'>('rates');
+  const [deliveryRequestsCount, setDeliveryRequestsCount] = useState(0);
 
   const [artworkForm, setArtworkForm] = useState({
     title: '',
@@ -59,12 +62,13 @@ export default function AdminPanel() {
   const loadData = async () => {
     setLoadingData(true);
 
-    const [artworksRes, artistsRes, categoriesRes, applicationsRes, submissionsRes] = await Promise.all([
+    const [artworksRes, artistsRes, categoriesRes, applicationsRes, submissionsRes, requestsRes] = await Promise.all([
       (supabase.from('artworks' as any) as any).select('*, artists(name, slug), categories(name)').order('created_at', { ascending: false }),
       (supabase.from('artists' as any) as any).select('*').order('name'),
       (supabase.from('categories' as any) as any).select('id, name').order('name'),
       (supabase.from('artist_applications' as any) as any).select('*').order('created_at', { ascending: false }),
       (supabase.from('artwork_submissions' as any) as any).select('*, artists(name)').order('created_at', { ascending: false }),
+      supabase.from('delivery_change_requests').select('*').eq('status', 'pending'),
     ]);
 
     if (artworksRes.data) setArtworks(artworksRes.data);
@@ -72,6 +76,7 @@ export default function AdminPanel() {
     if (categoriesRes.data) setCategories(categoriesRes.data);
     if ((applicationsRes as any).data) setApplications((applicationsRes as any).data);
     if ((submissionsRes as any).data) setSubmissions((submissionsRes as any).data);
+    if (requestsRes.data) setDeliveryRequestsCount(requestsRes.data.length);
 
     setLoadingData(false);
   };
@@ -378,7 +383,7 @@ export default function AdminPanel() {
           <h1 className="text-4xl font-bold bg-gradient-to-r from-pink-500 via-orange-600 to-yellow-500 bg-clip-text text-transparent">
             {t('adminPanel')}
           </h1>
-          <p className="text-gray-600 mt-2">Manage exchange rates and artworks</p>
+          <p className="text-gray-500">{t('manageRatesAndArtworks')}</p>
         </div>
 
         {message && (
@@ -450,6 +455,31 @@ export default function AdminPanel() {
                   </span>
                 )}
               </button>
+              <button
+                onClick={() => setActiveTab('delivery')}
+                className={`flex-1 px-6 py-4 text-sm font-medium transition-colors ${activeTab === 'delivery'
+                  ? 'border-b-2 border-orange-600 text-orange-600 bg-orange-50'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+              >
+                <CalendarIcon className="w-5 h-5 inline mr-2" />
+                {t('deliveryCalendar')}
+              </button>
+              <button
+                onClick={() => setActiveTab('requests')}
+                className={`flex-1 px-6 py-4 text-sm font-medium transition-colors ${activeTab === 'requests'
+                  ? 'border-b-2 border-orange-600 text-orange-600 bg-orange-50'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+              >
+                <Inbox className="w-5 h-5 inline mr-2" />
+                {t('requests')}
+                {deliveryRequestsCount > 0 && (
+                  <span className="ml-2 px-2 py-0.5 text-xs bg-orange-600 text-white rounded-full">
+                    {deliveryRequestsCount}
+                  </span>
+                )}
+              </button>
             </div>
           </div>
 
@@ -488,8 +518,9 @@ export default function AdminPanel() {
                       onChange={(e) => setRates({ ...rates, EUR: e.target.value })}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     />
-                    <p className="text-sm text-gray-500 mt-1">1 USD = {rates.EUR} EUR</p>
-                  </div>
+                    <p className="text-xs text-blue-600 mt-1">
+                      {t('usdRateConversionDesc').replace('{rate}', rates.EUR.toString()).replace('{currency}', 'EUR')}
+                    </p></div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -502,8 +533,9 @@ export default function AdminPanel() {
                       onChange={(e) => setRates({ ...rates, GBP: e.target.value })}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     />
-                    <p className="text-sm text-gray-500 mt-1">1 USD = {rates.GBP} GBP</p>
-                  </div>
+                    <p className="text-xs text-blue-600 mt-1">
+                      {t('usdRateConversionDesc').replace('{rate}', rates.GBP.toString()).replace('{currency}', 'GBP')}
+                    </p></div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -516,8 +548,9 @@ export default function AdminPanel() {
                       onChange={(e) => setRates({ ...rates, TRY: e.target.value })}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                     />
-                    <p className="text-sm text-gray-500 mt-1">1 USD = {rates.TRY} TRY</p>
-                  </div>
+                    <p className="text-xs text-blue-600 mt-1">
+                      {t('usdRateConversionDesc').replace('{rate}', rates.TRY.toString()).replace('{currency}', 'TRY')}
+                    </p></div>
                 </div>
 
                 <button
@@ -655,7 +688,7 @@ export default function AdminPanel() {
                                   }));
                                 }}
                                 className="relative group flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden border-2 border-white shadow-sm hover:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
-                                title={`${sub.title} by ${sub.artists?.name}`}
+                                title={`${sub.title} ${t('by')} ${sub.artists?.name}`}
                               >
                                 <img src={sub.image_url} alt={sub.title} className="w-full h-full object-cover" />
                                 <div className="absolute inset-x-0 bottom-0 bg-black bg-opacity-50 text-white text-[10px] p-1 truncate text-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -760,7 +793,7 @@ export default function AdminPanel() {
                           className="w-full h-48 object-cover rounded-lg mb-3"
                         />
                         <h4 className="font-semibold text-gray-900 truncate">{artwork.title}</h4>
-                        <p className="text-sm text-gray-600">{artwork.artists?.name || 'Unknown Artist'}</p>
+                        <p className="text-sm text-gray-600">{artwork.artists?.name || t('unknownArtist')}</p>
                         <p className="text-sm font-medium text-orange-600 mt-2">
                           {artwork.price} {artwork.base_currency || 'USD'}
                         </p>
@@ -864,10 +897,10 @@ export default function AdminPanel() {
                                 {app.artist_type}
                               </span>
                             </div>
-                            <p className="text-sm text-gray-600 mb-1"><strong>Email:</strong> {app.email}</p>
-                            <p className="text-sm text-gray-600 mb-4"><strong>Portfolio:</strong> <a href={app.portfolio_link} target="_blank" rel="noopener noreferrer" className="text-orange-600 hover:underline">{app.portfolio_link}</a></p>
+                            <p className="text-sm text-gray-600 mb-1"><strong>{t('email')}:</strong> {app.email}</p>
+                            <p className="text-sm text-gray-600 mb-4"><strong>{t('portfolio')}:</strong> <a href={app.portfolio_link} target="_blank" rel="noopener noreferrer" className="text-orange-600 hover:underline">{app.portfolio_link}</a></p>
                             {app.photo_url && (
-                              <p className="text-xs text-gray-400 mb-4 truncate max-w-md"><strong>Photo URL:</strong> {app.photo_url}</p>
+                              <p className="text-xs text-gray-400 mb-4 truncate max-w-md"><strong>{t('photoURL')}:</strong> {app.photo_url}</p>
                             )}
                             <div className="bg-gray-50 p-4 rounded-lg">
                               <p className="text-sm text-gray-700 italic">"{app.artist_statement}"</p>
@@ -907,7 +940,7 @@ export default function AdminPanel() {
                 {submissions.length === 0 ? (
                   <div className="text-center py-12 bg-gray-50 rounded-xl border-dashed border-2 border-gray-200">
                     <ImageIcon className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                    <p className="text-gray-500">{t('noSubmissionsYet') || "No submissions yet"}</p>
+                    <p className="text-gray-500">{t('noSubmissionsYet')}</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 gap-6">
@@ -924,8 +957,8 @@ export default function AdminPanel() {
                         <div className="flex-1">
                           <div className="flex justify-between items-start">
                             <div>
-                              <h3 className="text-xl font-bold text-gray-900 mb-1">{sub.title || 'Untitled'}</h3>
-                              <p className="text-sm text-gray-600 mb-4">{t('by')} <span className="font-semibold text-gray-800">{sub.artists?.name || 'Unknown Artist'}</span></p>
+                              <h3 className="text-xl font-bold text-gray-900 mb-1">{sub.title || t('untitled')}</h3>
+                              <p className="text-sm text-gray-600 mb-4">{t('by')} <span className="font-semibold text-gray-800">{sub.artists?.name || t('unknownArtist')}</span></p>
                             </div>
                             <div className="text-sm text-gray-400">
                               {new Date(sub.created_at).toLocaleDateString()}
@@ -933,7 +966,7 @@ export default function AdminPanel() {
                           </div>
 
                           <div className="bg-gray-50 p-3 rounded-lg border border-gray-100 mb-6">
-                            <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Image URL</p>
+                            <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">{t('imageURL')}</p>
                             <p className="text-xs text-blue-600 truncate font-mono">{sub.image_url}</p>
                           </div>
 
@@ -960,7 +993,7 @@ export default function AdminPanel() {
                           {sub.status === 'approved' && (
                             <p className="text-green-600 text-sm flex items-center gap-2">
                               <Check className="w-4 h-4" />
-                              {t('submissionApproved')} - Available in "Add Artwork"
+                              {t('submissionApproved')} - {t('availableInAddArtwork')}
                             </p>
                           )}
                         </div>
@@ -968,6 +1001,20 @@ export default function AdminPanel() {
                     ))}
                   </div>
                 )}
+              </div>
+            )}
+
+            {activeTab === 'delivery' && (
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('deliveryCalendar')}</h2>
+                <DeliveryCalendar onDateSet={() => loadData()} />
+              </div>
+            )}
+
+            {activeTab === 'requests' && (
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('deliveryChangeRequests')}</h2>
+                <DeliveryRequestsInbox onRequestHandled={() => loadData()} />
               </div>
             )}
           </div>

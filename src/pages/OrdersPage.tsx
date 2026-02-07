@@ -78,7 +78,7 @@ export default function OrdersPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="bg-gradient-to-br from-pink-50 via-orange-50 to-yellow-50 py-16 relative overflow-hidden">
+      <div className="bg-gradient-to-br from-pink-50 via-orange-50 to-yellow-50 py-32 relative overflow-hidden">
         <CornerFrame position="top-left" className="opacity-30" />
         <CornerFrame position="top-right" className="opacity-30" />
         <AbstractBrush className="top-20 right-32 animate-float" />
@@ -192,7 +192,7 @@ export default function OrdersPage() {
                           {item.artworks.artists?.name || t('unknownArtist')}
                         </button>
                         <div className="flex justify-between items-center mt-1">
-                          <p className="text-gray-500 text-xs">Qty: {item.quantity}</p>
+                          <p className="text-gray-500 text-xs">{t('quantity')}: {item.quantity}</p>
                           <p className="text-lg font-bold text-orange-600">
                             {formatPrice(item.price * item.quantity, order.currency || 'EUR')}
                           </p>

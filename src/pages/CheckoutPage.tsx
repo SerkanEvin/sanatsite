@@ -358,7 +358,7 @@ export default function CheckoutPage() {
                       <h3 className="font-semibold text-sm truncate">{item.artwork?.title || t('unknownArtwork')}</h3>
                       <p className="text-sm text-gray-600">{item.artwork?.artists?.name || t('unknownArtist')}</p>
                       <div className="flex justify-between items-center mt-2">
-                        <p className="text-gray-500 text-xs">Qty: {item.quantity}</p>
+                        <p className="text-gray-500 text-xs">{t('quantity')}: {item.quantity}</p>
                         <p className="text-lg font-bold text-orange-600">
                           {formatPrice((item.price || item.artwork?.price || 0) * item.quantity, (item.artwork?.base_currency as any) || 'EUR')}
                         </p>

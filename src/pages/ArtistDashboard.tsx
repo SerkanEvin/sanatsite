@@ -4,8 +4,9 @@ import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { supabase } from '../lib/supabase';
 import { CornerFrame, AbstractBrush, CirclePattern, Sparkle, FloatingShapes, PaintSplatter } from '../components/DecorativeElements';
-import { Upload, Clock, CheckCircle, XCircle, Plus, X } from 'lucide-react';
+import { Upload, Clock, CheckCircle, XCircle, Plus, X, Calendar as CalendarIcon } from 'lucide-react';
 import type { Artist } from '../lib/database.types';
+import CustomerDeliveryCalendar from '../components/customer/CustomerDeliveryCalendar';
 
 export default function ArtistDashboard() {
     const navigate = useNavigate();
@@ -467,6 +468,20 @@ export default function ArtistDashboard() {
                                 ))
                             )}
                         </div>
+                    </div>
+                </div>
+
+                {/* Delivery Calendar Section */}
+                <div className="mt-8 bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 relative">
+                    <div className="p-8">
+                        <div className="flex items-center gap-2 mb-6">
+                            <CalendarIcon className="w-6 h-6 text-orange-600" />
+                            <h2 className="text-2xl font-bold text-gray-900">{t('deliveryCalendar')}</h2>
+                        </div>
+                        <p className="text-gray-600 mb-6">
+                            View delivery dates for orders containing your artworks. Customers can request delivery date changes which admins will review.
+                        </p>
+                        <CustomerDeliveryCalendar userId={user!.id} />
                     </div>
                 </div>
             </div>

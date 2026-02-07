@@ -104,7 +104,7 @@ export default function ArtistApplicationForm() {
 
     return (
         <div className="min-h-screen bg-white">
-            <div className="bg-gradient-to-br from-pink-50 via-orange-50 to-yellow-50 py-20">
+            <div className="bg-gradient-to-br from-pink-50 via-orange-50 to-yellow-50 py-32">
                 <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                     <button
                         onClick={() => navigate('/artists')}

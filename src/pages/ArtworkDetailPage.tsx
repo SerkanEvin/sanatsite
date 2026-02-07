@@ -121,12 +121,15 @@ export default function ArtworkDetailPage({ onShowAuth }: ArtworkDetailPageProps
 
     setAdding(true);
     if (artworkId) {
-      await addToCart(artworkId, {
-        size: selectedSize,
-        material: selectedMaterial,
-        frame: selectedFrame,
-        price: calculatePrice()
-      }, quantity);
+      // Add to cart multiple times based on quantity
+      for (let i = 0; i < quantity; i++) {
+        await addToCart(artworkId, {
+          size: selectedSize,
+          material: selectedMaterial,
+          frame: selectedFrame,
+          price: calculatePrice()
+        });
+      }
     }
     setAdding(false);
   };

@@ -1,8 +1,7 @@
-import { useEffect, useState, useRef } from 'react';
-import { Filter, ChevronDown } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Filter } from 'lucide-react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { useCurrency } from '../contexts/CurrencyContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import type { Artwork, Artist, Category } from '../lib/database.types';
 import { CornerFrame, AbstractBrush, CirclePattern, Sparkle, DottedCircle, PaintSplatter, HandDrawnStar, FloatingShapes, ScribbleCircle, Doodle } from '../components/DecorativeElements';
@@ -16,29 +15,15 @@ export default function ArtworksPage() {
   const navigate = useNavigate();
   const initialCategory = searchParams.get('category');
 
-  const { formatPrice } = useCurrency();
   const { t } = useLanguage();
   const [artworks, setArtworks] = useState<ArtworkWithArtist[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [artists, setArtists] = useState<Artist[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedArtist, setSelectedArtist] = useState<string>('all');
-  const [selectedMedium, setSelectedMedium] = useState<string>('all');
-  const [priceRange, setPriceRange] = useState<{ min: number; max: number }>({ min: 0, max: 100000 });
   const [loading, setLoading] = useState(true);
-  const [showPriceDropdown, setShowPriceDropdown] = useState(false);
-  const priceDropdownRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (priceDropdownRef.current && !priceDropdownRef.current.contains(event.target as Node)) {
-        setShowPriceDropdown(false);
-      }
-    };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   useEffect(() => {
     loadCategories();
@@ -60,7 +45,7 @@ export default function ArtworksPage() {
 
   useEffect(() => {
     loadArtworks();
-  }, [selectedCategory, selectedArtist, selectedMedium, priceRange]);
+  }, [selectedCategory, selectedArtist]);
 
   const loadCategories = async () => {
     const { data } = await supabase
@@ -110,13 +95,7 @@ export default function ArtworksPage() {
       query = query.eq('artist_id', selectedArtist);
     }
 
-    // Medium filter
-    if (selectedMedium !== 'all') {
-      query = query.eq('medium', selectedMedium);
-    }
 
-    // Price range filter
-    query = query.gte('price', priceRange.min).lte('price', priceRange.max);
 
     const { data } = await query;
 
@@ -138,7 +117,7 @@ export default function ArtworksPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="relative bg-gradient-to-br from-pink-100 via-orange-100 to-yellow-100 py-20 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-pink-100 via-orange-100 to-yellow-100 py-32 overflow-hidden">
         {/* Artistic Background Elements */}
         <CornerFrame position="top-left" className="opacity-60" />
         <CornerFrame position="top-right" className="opacity-60" />
@@ -196,19 +175,34 @@ export default function ArtworksPage() {
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-pink-400 to-transparent opacity-50"></div>
         <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-orange-400 to-transparent opacity-50"></div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative text-center z-10">
-          {/* Title with artistic underline */}
-          <div className="relative inline-block">
-            <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-gray-900 via-gray-700 to-gray-900 bg-clip-text text-transparent mb-6 tracking-tight">
-              {t('artworksHeroTitle')}
-            </h1>
-            {/* Artistic underline */}
-            <div className="absolute -bottom-2 left-0 right-0 h-2 bg-gradient-to-r from-transparent via-orange-500 to-transparent opacity-70 rounded-full"></div>
-          </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="text-center space-y-6">
+            <div className="hidden inline-flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-sm rounded-full text-sm font-medium text-orange-600 mb-4 opacity-0 animate-fadeIn">
+              <span>{t('exploreOurCollection')}</span>
+            </div>
 
-          <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto font-light leading-relaxed mt-8">
-            {t('artworksHeroSubtitle')}
-          </p>
+            {/* Title with artistic underline */}
+            <div className="relative inline-block">
+              <h1 className="text-6xl md:text-7xl font-black mb-6 tracking-tight">
+                {t('artworksHeroTitle')}
+              </h1>
+              {/* Artistic underline */}
+              <div className="absolute -bottom-2 left-0 right-0 h-2 bg-gradient-to-r from-transparent via-orange-500 to-transparent opacity-70 rounded-full"></div>
+            </div>
+
+            <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              {t('artworksHeroSubtitle')}
+            </p>
+
+            <div className="flex flex-wrap gap-4 justify-center pt-4 opacity-0 animate-fadeInUp delay-300">
+              <button
+                onClick={() => window.scrollTo({ top: (document.querySelector('.max-w-7xl.mx-auto.px-4.sm\\:px-6.lg\\:px-8.py-12')?.getBoundingClientRect().top ?? 0) + window.scrollY - 100, behavior: 'smooth' })}
+                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-pink-400 via-orange-500 to-yellow-500 text-white rounded-full font-medium text-lg hover:shadow-2xl transition-all transform hover:scale-105"
+              >
+                {t('browseArtworks')}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -243,97 +237,7 @@ export default function ArtworksPage() {
           </select>
         </div>
 
-        {/* SECONDARY FILTERS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {/* Medium Filter */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t('medium')}
-            </label>
-            <select
-              value={selectedMedium}
-              onChange={(e) => setSelectedMedium(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-            >
-              <option value="all">{t('allMediums')}</option>
-              <option value="Digital">{t('digital')}</option>
-              <option value="Watercolor">{t('watercolor')}</option>
-              <option value="Acrylic">{t('acrylic')}</option>
-              <option value="Oil">{t('originals')}</option>
-              <option value="Mixed Media">{t('mixedMedia')}</option>
-              <option value="Photography">{t('photography')}</option>
-            </select>
-          </div>
 
-          {/* Price Range Filter */}
-          <div className="relative" ref={priceDropdownRef}>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t('priceRange')}
-            </label>
-            <button
-              onClick={() => setShowPriceDropdown(!showPriceDropdown)}
-              className="flex items-center justify-between w-full px-4 py-3 bg-white border border-gray-300 rounded-lg hover:border-orange-500 transition-all focus:ring-2 focus:ring-orange-500 focus:border-transparent group"
-            >
-              <span className="text-gray-700 font-medium">
-                {priceRange.min === 0 && priceRange.max === 100000
-                  ? t('anyPrice')
-                  : priceRange.max === 100000
-                    ? `${formatPrice(priceRange.min)}+`
-                    : `${formatPrice(priceRange.min)} - ${formatPrice(priceRange.max)}`
-                }
-              </span>
-              <ChevronDown className={`w-5 h-5 text-gray-400 group-hover:text-orange-500 transition-transform duration-300 ${showPriceDropdown ? 'rotate-180' : ''}`} />
-            </button>
-
-            {showPriceDropdown && (
-              <div className="absolute z-[110] left-0 right-0 top-0 bg-white/95 backdrop-blur-2xl border border-gray-100 rounded-xl shadow-2xl max-h-[400px] overflow-y-auto overflow-x-hidden animate-scaleIn origin-top custom-scrollbar">
-                <div className="p-2 space-y-1">
-                  {(() => {
-                    const ranges: { label?: string; min: number; max: number; isPlus?: boolean }[] = [
-                      { label: t('anyPrice'), min: 0, max: 100000 },
-                      { min: 1, max: 99 },
-                      { min: 100, max: 299 },
-                      { min: 300, max: 499 },
-                      { min: 500, max: 699 },
-                      { min: 700, max: 899 },
-                      { min: 900, max: 1199 },
-                    ];
-
-                    for (let min = 1200; min < 5000; min += 200) {
-                      ranges.push({ min, max: min + 199 });
-                    }
-
-                    ranges.push({ min: 5000, max: 100000, isPlus: true });
-
-                    return ranges.map((range, index) => {
-                      const isSelected = priceRange.min === range.min && priceRange.max === range.max;
-                      const label = range.label || (range.isPlus
-                        ? `${formatPrice(range.min)}+`
-                        : `${formatPrice(range.min)} - ${formatPrice(range.max)}`);
-
-                      return (
-                        <button
-                          key={index}
-                          onClick={() => {
-                            setPriceRange({ min: range.min, max: range.max });
-                            setShowPriceDropdown(false);
-                          }}
-                          className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all flex items-center justify-between group ${isSelected
-                            ? 'bg-orange-600 text-white shadow-md'
-                            : 'hover:bg-orange-50 text-gray-700 hover:text-orange-600'
-                            }`}
-                        >
-                          <span>{label}</span>
-                          {isSelected && <div className="w-2 h-2 bg-white rounded-full animate-pulse" />}
-                        </button>
-                      );
-                    });
-                  })()}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
 
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-4">
@@ -412,12 +316,6 @@ export default function ArtworksPage() {
                     alt={artwork.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                      <p className="text-xs font-medium mb-1">{artwork.medium}</p>
-                      <p className="text-xs opacity-80">{artwork.dimensions}</p>
-                    </div>
-                  </div>
                   <div className="absolute top-3 right-3 w-2 h-2 bg-white rounded-full opacity-0 group-hover:opacity-80 transition-opacity duration-300"></div>
                 </div>
                 <div className="space-y-1">
@@ -435,9 +333,6 @@ export default function ArtworksPage() {
                   >
                     {artwork.artists?.name || t('unknownArtist')}
                   </button>
-                  <p className="text-lg font-bold bg-gradient-to-r from-pink-500 via-orange-600 to-yellow-500 bg-clip-text text-transparent">
-                    {formatPrice(artwork.price, (artwork.base_currency as any) || 'EUR')}
-                  </p>
                 </div>
               </div>
             ))}

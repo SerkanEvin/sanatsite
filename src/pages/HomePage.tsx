@@ -132,7 +132,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <section className="relative overflow-hidden h-screen">
+      <section className="relative overflow-hidden py-32">
         <div className="absolute inset-0 bg-gradient-to-br from-pink-100 via-orange-100 to-yellow-100" />
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiM5MzMzZWEiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDE0YzAtNi42MjcgNS4zNzMtMTIgMTItMTJzMTIgNS4zNzMgMTIgMTItNS4zNzMgMTItMTIgMTItMTItNS4zNzMtMTItMTJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-30" />
 
@@ -200,31 +200,33 @@ export default function HomePage() {
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-pink-400 to-transparent opacity-50"></div>
         <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-orange-400 to-transparent opacity-50"></div>
 
-        <div className="relative h-full flex items-center justify-center">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-4xl mx-auto z-10 relative">
-              {/* Title with artistic underline */}
-              <div className="relative inline-block">
-                <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-pink-500 via-orange-600 to-yellow-600 bg-clip-text text-transparent mb-6 tracking-tight opacity-0 animate-fadeInUp">
-                  {t('galleryHeroTitle')}
-                </h1>
-                {/* Artistic underline */}
-                <div className="absolute -bottom-2 left-0 right-0 h-2 bg-gradient-to-r from-transparent via-orange-500 to-transparent opacity-70 rounded-full"></div>
-              </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="text-center space-y-6">
+            <div className="hidden inline-flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-sm rounded-full text-sm font-medium text-orange-600 mb-4 opacity-0 animate-fadeIn">
+              <span>{t('welcomeToGallery')}</span>
+            </div>
 
-              <p className="text-xl md:text-2xl text-gray-700 max-w-2xl mx-auto font-light leading-relaxed mb-10 opacity-0 animate-fadeInUp delay-100 mt-8">
-                {t('galleryHeroSubtitle')}
-              </p>
+            {/* Title with artistic underline */}
+            <div className="relative inline-block">
+              <h1 className="text-6xl md:text-7xl font-black mb-6 tracking-tight opacity-0 animate-fadeInUp">
+                {t('galleryHeroTitle')}
+              </h1>
+              {/* Artistic underline */}
+              <div className="absolute -bottom-2 left-0 right-0 h-2 bg-gradient-to-r from-transparent via-orange-500 to-transparent opacity-70 rounded-full"></div>
+            </div>
 
-              <div className="flex flex-wrap gap-4 justify-center opacity-0 animate-fadeInUp delay-300">
-                <button
-                  onClick={() => navigate('/artworks')}
-                  className="inline-flex items-center gap-2 px-10 py-5 bg-gradient-to-r from-pink-500 via-orange-600 to-yellow-600 text-white rounded-full font-bold text-lg shadow-xl hover:shadow-2xl transition-all transform hover:scale-105 hover:-translate-y-1"
-                >
-                  {t('startExploring') || "Start Exploring"}
-                  <ArrowRight className="w-5 h-5" />
-                </button>
-              </div>
+            <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed opacity-0 animate-fadeInUp delay-200">
+              {t('galleryHeroSubtitle')}
+            </p>
+
+            <div className="flex flex-wrap gap-4 justify-center pt-4 opacity-0 animate-fadeInUp delay-300">
+              <button
+                onClick={() => navigate('/artworks')}
+                className="inline-flex items-center gap-2 px-10 py-5 bg-gradient-to-r from-pink-500 via-orange-600 to-yellow-600 text-white rounded-full font-bold text-lg shadow-xl hover:shadow-2xl transition-all transform hover:scale-105 hover:-translate-y-1"
+              >
+                {t('startExploring') || "Start Exploring"}
+                <ArrowRight className="w-5 h-5" />
+              </button>
             </div>
           </div>
         </div>

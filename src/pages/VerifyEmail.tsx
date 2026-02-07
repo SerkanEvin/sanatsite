@@ -116,7 +116,7 @@ export default function VerifyEmail() {
                         </div>
                         <h1 className="text-3xl font-bold text-gray-900 mb-4">{t('verificationSuccessful')}</h1>
                         <p className="text-gray-600 mb-2">{t('verificationSuccessSubtitle')}</p>
-                        <p className="text-sm text-gray-400">Redirecting to login...</p>
+                        <p className="text-sm text-gray-400">{t('redirectingToLoginSimple')}</p>
                     </div>
                 ) : (
                     <>
