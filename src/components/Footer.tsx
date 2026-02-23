@@ -22,7 +22,6 @@ export default function Footer() {
                             <li><button onClick={() => handleCategoryClick('open-edition-prints')} className="hover:text-orange-600 transition-colors">{t('open-edition-prints')}</button></li>
                             <li><button onClick={() => handleCategoryClick('photography')} className="hover:text-orange-600 transition-colors">{t('photography')}</button></li>
                             <li><button onClick={() => handleCategoryClick('digital-art')} className="hover:text-orange-600 transition-colors">{t('digital-art')}</button></li>
-                            <li><button onClick={() => handleCategoryClick('original-works')} className="hover:text-orange-600 transition-colors">{t('original-works')}</button></li>
                         </ul>
                     </div>
 

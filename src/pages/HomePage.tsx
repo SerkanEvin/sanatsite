@@ -32,7 +32,6 @@ export default function HomePage() {
       { slug: 'open-edition-prints', label: 'open-edition-prints', image: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&q=80' },
       { slug: 'photography', label: 'photography', image: 'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&q=80' },
       { slug: 'digital-art', label: 'digital-art', image: 'https://images.unsplash.com/photo-1547891654-e66ed7ebb968?auto=format&fit=crop&q=80' },
-      { slug: 'original-works', label: 'original-works', image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&q=80' },
     ];
 
     const categoryData: CategoryWithArtwork[] = [];

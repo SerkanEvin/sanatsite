@@ -323,7 +323,12 @@ export default function ArtworkDetailPage({ onShowAuth }: ArtworkDetailPageProps
                 <h3 className="text-xs font-bold uppercase tracking-widest mb-3">{t('material')}</h3>
                 <div className="flex flex-wrap gap-2">
                   <button
-                    onClick={() => setSelectedMaterial('photograph-paper')}
+                    onClick={() => {
+                      setSelectedMaterial('photograph-paper');
+                      if (selectedSize === '96x128cm') {
+                        setSelectedSize('75x100cm');
+                      }
+                    }}
                     disabled={selectedFrame === 'stretched-canvas'}
                     className={`px-4 py-2 text-sm border transition-all ${selectedMaterial === 'photograph-paper'
                       ? 'border-black bg-black text-white'
@@ -358,7 +363,7 @@ export default function ArtworkDetailPage({ onShowAuth }: ArtworkDetailPageProps
                 <div className="flex flex-wrap gap-2">
                   {['38x50cm', '45x60cm', '60x80cm', '75x100cm', '96x128cm'].map((size) => {
                     const isLargest = size === '96x128cm';
-                    const isDisabled = selectedFrame === 'stretched-canvas' && isLargest;
+                    const isDisabled = isLargest && (selectedFrame === 'stretched-canvas' || selectedMaterial === 'photograph-paper');
 
                     return (
                       <button
@@ -377,7 +382,7 @@ export default function ArtworkDetailPage({ onShowAuth }: ArtworkDetailPageProps
                     );
                   })}
                 </div>
-                {selectedFrame === 'stretched-canvas' && (
+                {(selectedFrame === 'stretched-canvas' || selectedMaterial === 'photograph-paper') && (
                   <p className="text-xs text-gray-500 mt-2">
                     {t('largestSizeNote')}
                   </p>

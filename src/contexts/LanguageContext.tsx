@@ -36,14 +36,12 @@ const translations: Record<Language, Record<string, string>> = {
     'open-edition-prints': 'Open Edition Prints',
     'photography': 'Photography',
     'digital-art': 'Digital Art',
-    'original-works': 'Original Works',
 
     // Shop Links
     new: 'New',
     prints: 'Prints',
     sets: 'Sets',
     limitedEdition: 'Limited Edition',
-    originals: 'Originals',
     books: 'Books',
 
     // Info Links
@@ -191,7 +189,7 @@ const translations: Record<Language, Record<string, string>> = {
     creativeExpression: 'Creative Expression',
     homeDescription: 'Step into our gallery where every piece tells a unique story. Discover the passion, imagination, and talent of artists from around the globe. Let their creativity inspire yours.',
     browseAllArt: 'Browse All Art',
-    browseOurCompleteCollectionDesc: 'Step into a world of creativity and inspiration. Explore our unique gallery of original artworks.',
+    browseOurCompleteCollectionDesc: 'Step into a world of creativity and inspiration. Explore our unique gallery of artworks.',
     meetOurArtistsDesc: 'Explore our curated community of talented creators and their unique journeys.',
     loadingGallery: 'Loading gallery...',
     featuredArtwork: 'Featured Artwork',
@@ -211,7 +209,7 @@ const translations: Record<Language, Record<string, string>> = {
     original: 'original',
     format: 'Format',
     stretchedCanvasNote: '* Stretched canvas can only be printed on canvas material',
-    largestSizeNote: '* Largest size (96x128cm) not available for stretched canvas',
+    largestSizeNote: '* Largest size (96x128cm) is not available for the current selection',
     variousDimensions: 'various dimensions and printing surfaces',
     createdIn: 'was created in',
     openEditionDescription: 'Open edition print that can be produced in',
@@ -537,14 +535,12 @@ const translations: Record<Language, Record<string, string>> = {
     'open-edition-prints': 'Açık Edisyon Baskılar',
     'photography': 'Fotoğraflar',
     'digital-art': 'Dijital Art',
-    'original-works': 'Orijinal Eserler',
 
     // Shop Links
     new: 'Yeni',
     prints: 'Baskılar',
     sets: 'Setler',
     limitedEdition: 'Sınırlı Baskı',
-    originals: 'Orijinaller',
     books: 'Kitaplar',
 
     // Info Links
@@ -711,7 +707,7 @@ const translations: Record<Language, Record<string, string>> = {
     original: 'orijinal',
     format: 'Format',
     stretchedCanvasNote: '* Şaseli tuval sadece tuval materyali üzerine basılabilir',
-    largestSizeNote: '* En büyük boyut (96x128cm) şaseli tuval için mevcut değildir',
+    largestSizeNote: '* En büyük boyut (96x128cm) mevcut seçim için kullanılamaz',
     variousDimensions: 'çeşitli boyutlarda ve baskı yüzeylerinde',
     createdIn: 'yılında üretilmiştir',
     openEditionDescription: 'Açık edisyon baskı olup, farklı boyut ve yüzeylerde üretilebilir',
@@ -771,7 +767,7 @@ const translations: Record<Language, Record<string, string>> = {
     latestArtworksDesc: 'Sürekli büyüyen koleksiyonumuza yeni eklenenleri keşfedin.',
     meetOurArtists: 'Sanatçılarımızla Tanışın',
     meetOurArtistsDesc: 'Küratörlüğünü yaptığımız yetenekli topluluğumuzu ve benzersiz hikayelerini keşfedin.',
-    browseOurCompleteCollectionDesc: 'Yaratıcılık ve ilham dünyasına adım atın. Orijinal sanat eserlerinden oluşan benzersiz galerimizi keşfedin.',
+    browseOurCompleteCollectionDesc: 'Yaratıcılık ve ilham dünyasına adım atın. Benzersiz sanat eserlerinden oluşan galerimizi keşfedin.',
     joinUsAsArtist: 'Bize Katılın',
     artistApplicationDesc: 'Küratörlüğünü yaptığımız galerimize katılacak taze bakış açıları ve ilham verici yetenekler arıyoruz.',
     edit: 'Düzenle',

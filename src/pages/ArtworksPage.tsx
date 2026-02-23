@@ -112,7 +112,6 @@ export default function ArtworksPage() {
     { slug: 'open-edition-prints' },
     { slug: 'photography' },
     { slug: 'digital-art' },
-    { slug: 'original-works' },
   ];
 
   return (
