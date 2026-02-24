@@ -88,12 +88,25 @@ export default function CheckoutPage() {
     setLoading(true);
 
     try {
-      // 1. Initialize Payment with Edge Function
+      // Convert cart items to EUR and multiply price by quantity for Iyzico
+      const iyzicoItems = cartItems.map(item => {
+        const priceToUse = item.price || item.artwork?.price || 0;
+        const baseCurrencyToUse = (item.artwork?.base_currency as any) || 'EUR';
+        const priceInEUR = convertPrice(priceToUse, baseCurrencyToUse, 'EUR');
+        return {
+          ...item,
+          price: priceInEUR * item.quantity, // Iyzico requires the row total as price
+          quantity: item.quantity
+        };
+      });
+
+      const totalInEUR = iyzicoItems.reduce((sum, item) => sum + item.price, 0);
+
       const { data, error } = await supabase.functions.invoke('iyzico-init', {
         body: {
           user,
-          cartItems,
-          totalAmount: total,
+          cartItems: iyzicoItems,
+          totalAmount: totalInEUR,
           currency: 'EUR',
           shippingAddress: formData,
         },
