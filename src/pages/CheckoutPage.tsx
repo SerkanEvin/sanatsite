@@ -94,6 +94,7 @@ export default function CheckoutPage() {
           user,
           cartItems,
           totalAmount: total,
+          currency: 'EUR',
           shippingAddress: formData,
         },
       });
@@ -116,7 +117,11 @@ export default function CheckoutPage() {
           const scripts = container.getElementsByTagName('script');
           for (let i = 0; i < scripts.length; i++) {
             const script = document.createElement('script');
-            script.text = scripts[i].text;
+            if (scripts[i].src) {
+              script.src = scripts[i].src;
+            } else {
+              script.text = scripts[i].text;
+            }
             document.body.appendChild(script);
           }
         }
@@ -127,9 +132,10 @@ export default function CheckoutPage() {
         throw new Error('Invalid response from payment provider');
       }
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Payment Error:', err);
-      showToast(err.message || t('failedToCompleteOrder'), 'error');
+      const errorMessage = err instanceof Error ? err.message : typeof err === 'string' ? err : t('failedToCompleteOrder');
+      showToast(errorMessage, 'error');
     }
 
     setLoading(false);

@@ -314,7 +314,6 @@ serve(async (req) => {
                 redirectUrl.searchParams.set('status', 'failure');
                 redirectUrl.searchParams.set('message', failureMessage);
             }
-
             return Response.redirect(redirectUrl.toString(), 303);
 
         } else {
