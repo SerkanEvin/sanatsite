@@ -10,6 +10,8 @@ import { supabase } from '../lib/supabase';
 import { CornerFrame, AbstractBrush, Sparkle, DottedCircle, PaintSplatter, HandDrawnStar, FloatingShapes, ScribbleCircle, SketchLine, Doodle } from '../components/DecorativeElements';
 import { Country, State, City, IState, ICity } from 'country-state-city';
 
+type Currency = 'USD' | 'EUR' | 'TRY' | 'GBP';
+
 export default function CheckoutPage() {
   const navigate = useNavigate();
   const { cartItems } = useCart();
@@ -37,6 +39,15 @@ export default function CheckoutPage() {
     zipCode: '',
     country: '',
   });
+
+  // Determine payment currency based on country
+  // Turkey (TR) uses TRY, all other countries use EUR
+  const getCurrencyForCountry = (countryIsoCode: string): Currency => {
+    return countryIsoCode === 'TR' ? 'TRY' : 'EUR';
+  };
+
+  // Get payment currency based on selected country
+  const paymentCurrency = getCurrencyForCountry(selectedCountry);
 
   // Location Handlers
   const handleCountryChange = (isoCode: string) => {
@@ -83,31 +94,40 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user || !selectedCountry) {
+      showToast(t('selectCountry'), 'error');
+      return;
+    }
 
     setLoading(true);
 
     try {
-      // Convert cart items to EUR and multiply price by quantity for Iyzico
+      // Convert cart items to payment currency (TRY for Turkey, EUR for others)
       const iyzicoItems = cartItems.map(item => {
         const priceToUse = item.price || item.artwork?.price || 0;
         const baseCurrencyToUse = (item.artwork?.base_currency as any) || 'EUR';
-        const priceInEUR = convertPrice(priceToUse, baseCurrencyToUse, 'EUR');
+        const priceInPaymentCurrency = convertPrice(
+          priceToUse,
+          baseCurrencyToUse,
+          paymentCurrency
+        );
         return {
           ...item,
-          price: priceInEUR * item.quantity, // Iyzico requires the row total as price
+          price: priceInPaymentCurrency * item.quantity, // Iyzico requires the row total as price
+          currency: paymentCurrency,
           quantity: item.quantity
         };
       });
 
-      const totalInEUR = iyzicoItems.reduce((sum, item) => sum + item.price, 0);
+      const totalInPaymentCurrency = iyzicoItems.reduce((sum: number, item: any) => sum + item.price, 0);
 
       const { data, error } = await supabase.functions.invoke('iyzico-init', {
         body: {
           user,
           cartItems: iyzicoItems,
-          totalAmount: totalInEUR,
-          currency: 'EUR',
+          totalAmount: totalInPaymentCurrency,
+          currency: paymentCurrency,
+          countryCode: selectedCountry,
           shippingAddress: formData,
         },
       });
