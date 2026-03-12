@@ -81,6 +81,19 @@ export default function CheckoutPage() {
     setFormData(prev => ({ ...prev, city: cityName }));
   };
 
+  // Calculate total in payment currency for order summary display
+  const totalInPaymentCurrency = cartItems.reduce((sum, item) => {
+    const priceToUse = item.price || item.artwork?.price || 0;
+    const baseCurrencyToUse = (item.artwork?.base_currency as any) || 'EUR';
+    const priceInPaymentCurrency = convertPrice(
+      priceToUse,
+      baseCurrencyToUse,
+      paymentCurrency
+    );
+    return sum + (priceInPaymentCurrency * item.quantity);
+  }, 0);
+
+  // Keep original total in user's display currency for compatibility
   const total = cartItems.reduce((sum, item) => {
     const priceToUse = item.price || item.artwork?.price || 0;
     const baseCurrencyToUse = (item.artwork?.base_currency as any) || 'EUR';
@@ -386,22 +399,28 @@ export default function CheckoutPage() {
               <h2 className="text-xl font-bold mb-6">{t('orderSummary')}</h2>
 
               <div className="space-y-4 mb-6">
-                {cartItems.map((item) => (
-                  <div key={item.id} className="flex gap-3">
-                    <img
-                      src={item.artwork?.image_url || 'https://via.placeholder.com/300?text=No+Image'}
-                      alt={item.artwork?.title || t('unknownArtwork')}
-                      className="w-16 h-16 object-cover rounded-lg"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-sm truncate">{item.artwork?.title || t('unknownArtwork')}</h3>
-                      <p className="text-sm text-gray-600">{item.artwork?.artists?.name || t('unknownArtist')}</p>
-                      <div className="flex justify-between items-center mt-2">
-                        <p className="text-gray-500 text-xs">{t('quantity')}: {item.quantity}</p>
-                        <p className="text-lg font-bold text-orange-600">
-                          {formatPrice((item.price || item.artwork?.price || 0) * item.quantity, (item.artwork?.base_currency as any) || 'EUR')}
-                        </p>
-                      </div>
+                {cartItems.map((item) => {
+                  // Calculate price in payment currency for display
+                  const itemPriceBase = item.price || item.artwork?.price || 0;
+                  const itemBaseCurrency = (item.artwork?.base_currency as any) || 'EUR';
+                  const itemPriceInPaymentCurrency = convertPrice(itemPriceBase, itemBaseCurrency, paymentCurrency);
+
+                  return (
+                    <div key={item.id} className="flex gap-3">
+                      <img
+                        src={item.artwork?.image_url || 'https://via.placeholder.com/300?text=No+Image'}
+                        alt={item.artwork?.title || t('unknownArtwork')}
+                        className="w-16 h-16 object-cover rounded-lg"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-sm truncate">{item.artwork?.title || t('unknownArtwork')}</h3>
+                        <p className="text-sm text-gray-600">{item.artwork?.artists?.name || t('unknownArtist')}</p>
+                        <div className="flex justify-between items-center mt-2">
+                          <p className="text-gray-500 text-xs">{t('quantity')}: {item.quantity}</p>
+                          <p className="text-lg font-bold text-orange-600">
+                            {formatPrice(itemPriceInPaymentCurrency * item.quantity, paymentCurrency)}
+                          </p>
+                        </div>
                       {(item.size || item.material || item.frame) && (
                         <div className="mt-2 flex flex-wrap gap-2">
                           {item.size && (
@@ -423,13 +442,14 @@ export default function CheckoutPage() {
                       )}
                     </div>
                   </div>
-                ))}
+                );
+                })}
               </div>
 
               <div className="border-t pt-4 space-y-2">
                 <div className="flex justify-between text-gray-600">
                   <span>{t('subtotal')}</span>
-                  <span>{formatPrice(total, currency)}</span>
+                  <span>{formatPrice(totalInPaymentCurrency, paymentCurrency)}</span>
                 </div>
                 <div className="flex justify-between text-gray-600">
                   <span>{t('shipping')}</span>
@@ -438,7 +458,7 @@ export default function CheckoutPage() {
                 <div className="flex justify-between text-xl font-bold pt-2 border-t">
                   <span>{t('total')}</span>
                   <span className="bg-gradient-to-r from-pink-500 via-orange-600 to-yellow-500 bg-clip-text text-transparent">
-                    {formatPrice(total, currency)}
+                    {formatPrice(totalInPaymentCurrency, paymentCurrency)}
                   </span>
                 </div>
               </div>
