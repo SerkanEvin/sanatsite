@@ -47,8 +47,8 @@ export default function CheckoutPage() {
   };
 
   // Get payment currency based on selected country
-  const paymentCurrency = getCurrencyForCountry(selectedCountry);
-
+  // const paymentCurrency = getCurrencyForCountry(selectedCountry);
+  const paymentCurrency = selectedCountry ? getCurrencyForCountry(selectedCountry) : currency;
   // Location Handlers
   const handleCountryChange = (isoCode: string) => {
     setSelectedCountry(isoCode);
@@ -421,28 +421,28 @@ export default function CheckoutPage() {
                             {formatPrice(itemPriceInPaymentCurrency * item.quantity, paymentCurrency)}
                           </p>
                         </div>
-                      {(item.size || item.material || item.frame) && (
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          {item.size && (
-                            <span className="text-[10px] uppercase tracking-wider bg-gray-200 px-1.5 py-0.5 rounded text-gray-700">
-                              {item.size}
-                            </span>
-                          )}
-                          {item.material && (
-                            <span className="text-[10px] uppercase tracking-wider bg-gray-200 px-1.5 py-0.5 rounded text-gray-700">
-                              {t(item.material === 'photograph-paper' ? 'photographPaper' : item.material)}
-                            </span>
-                          )}
-                          {item.frame && (
-                            <span className="text-[10px] uppercase tracking-wider bg-gray-200 px-1.5 py-0.5 rounded text-gray-700">
-                              {t(item.frame === 'no-frame' ? 'noFrame' : item.frame === 'stretched-canvas' ? 'stretchedCanvas' : item.frame)}
-                            </span>
-                          )}
-                        </div>
-                      )}
+                        {(item.size || item.material || item.frame) && (
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            {item.size && (
+                              <span className="text-[10px] uppercase tracking-wider bg-gray-200 px-1.5 py-0.5 rounded text-gray-700">
+                                {item.size}
+                              </span>
+                            )}
+                            {item.material && (
+                              <span className="text-[10px] uppercase tracking-wider bg-gray-200 px-1.5 py-0.5 rounded text-gray-700">
+                                {t(item.material === 'photograph-paper' ? 'photographPaper' : item.material)}
+                              </span>
+                            )}
+                            {item.frame && (
+                              <span className="text-[10px] uppercase tracking-wider bg-gray-200 px-1.5 py-0.5 rounded text-gray-700">
+                                {t(item.frame === 'no-frame' ? 'noFrame' : item.frame === 'stretched-canvas' ? 'stretchedCanvas' : item.frame)}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                );
+                  );
                 })}
               </div>
 
